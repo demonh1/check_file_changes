@@ -15,7 +15,7 @@ unsigned int calculateCrc (unsigned char* buf, unsigned long len) {
 unsigned long crcTable[256];
 unsigned long crc;
 
-for (int i = 0; i< 256; i++) {
+for (int i = 0; i < 256; i++) {
 crc = i;
 
 for (int j = 0; j < 8; j++)
@@ -41,10 +41,12 @@ return calculateCrc ((unsigned char*) buf, is.gcount() );
 void threadCalc() {
 
 data.push_back(countCrc("myfile.txt"));
+
 }
+
 void print () {
 
-std::cout <<" list crc: \n" ;
+std::cout << "List crc value: \n" ;
 	for ( Index ind = data.begin(); ind != data.end(); ++ind) 
    std::cout << *ind << ' ' << std::endl;
 }
@@ -53,7 +55,7 @@ void threadCheck() {
 
 Index i, j;
 
-for ( i = data.begin(); i != data.end(); ++i)
+for (i = data.begin(); i != data.end(); ++i)
 {
      if (i == data.begin()) ++i;
      j = i;
@@ -65,13 +67,14 @@ for ( i = data.begin(); i != data.end(); ++i)
 }
 
 void test() { 
+	
 int tik = 0;
-while (tik < 5*60) {
+while (tik < 5*60) { // 5 min 
 sleep(1);
 std::thread thr(threadCalc);
 thr.join();
 tik++;
-}
+	}
 
 }
 
@@ -79,6 +82,7 @@ int main() {
 
 test();
 threadCheck();
+
 //print ();
 
 return 0;
