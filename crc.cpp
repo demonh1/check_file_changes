@@ -1,14 +1,35 @@
 #include <iostream>
 #include <fstream>
+#include <string>
 #include <list>
+#include <iterator>
+#include <vector>
+#include <map>
+
 #include <thread>
 #include <unistd.h>
 
 typedef std::list<unsigned int> crcData;
-typedef std::list<unsigned int>::iterator Index;
+//typedef std::list<unsigned int>::iterator Index;
+
+typedef std::map<unsigned int, std::string> mMap;
+typedef std::map<unsigned int, std::string>::iterator itMap;
+
+
+std::ifstream dataFile("dataCheckFiles.txt");
+
+std::istream_iterator<std::string>dataBegin (dataFile);
+std::istream_iterator<std::string>dataEnd;
+
+std::vector<std::string> in (dataBegin,dataEnd);
+std::vector<std::string>::iterator it;
 
 crcData data; 
-Index index;
+
+mMap m;
+itMap iter;
+
+
 
 unsigned int calculateCrc (unsigned char* buf, unsigned long len) {
 
@@ -29,7 +50,7 @@ return crc ^ 0xFFFFFFFFUL;
 }
 
 //возвращание конечного CRC32
-unsigned int countCrc (char* fname) {
+unsigned int countCrc (const char* fname) {
 
 char buf [4096*64];
 std::ifstream is (fname, std::ios::binary);
@@ -40,31 +61,25 @@ return calculateCrc ((unsigned char*) buf, is.gcount() );
 
 void threadCalc() {
 
-data.push_back(countCrc("myfile.txt"));
+unsigned int ii;
+
+for (it = in.begin(); it != in.end(); ++it) {
+
+data.push_back(countCrc((*it).c_str()));
+ii = countCrc(((*it).c_str()));
+m.insert( std::make_pair(ii, *it));
+   }
 
 }
 
 void print () {
 
-std::cout << "List crc value: \n" ;
-	for ( Index ind = data.begin(); ind != data.end(); ++ind) 
-   std::cout << *ind << ' ' << std::endl;
+std::cout << "Map: " << std::endl;
+for (itMap i = m.begin(); i != m.end(); ++i)
+std::cout <<  i -> second << " " << i-> first << "\n";
+
 }
 
-void threadCheck() {
-
-Index i, j;
-
-for (i = data.begin(); i != data.end(); ++i)
-{
-     if (i == data.begin()) ++i;
-     j = i;
-     --j;
-     if (*i != *j) {
-          std:: cout << "File is modified!" << std::endl;
-     }
-  }
-}
 
 void test() { 
 	
@@ -78,12 +93,24 @@ tik++;
 
 }
 
+void check(mMap m) {
+itMap i,j;
+for ( i = m.begin(); i != m.end(); ++i) {
+//if (i == m.begin()) ++i;
+     j = i;
+     --j;
+if( i -> second == j -> second) {
+          std::cout << "File " << i -> second <<  " is modified!" << std::endl;
+	}
+     }
+}
+
 int main() {
 
 test();
-threadCheck();
+check(m);
 
-//print ();
+print ();
 
 return 0;
 }
