@@ -10,7 +10,7 @@
 #include <unistd.h>
 
 typedef std::list<unsigned int> crcData;
-//typedef std::list<unsigned int>::iterator Index;
+
 
 typedef std::map<unsigned int, std::string> mMap;
 typedef std::map<unsigned int, std::string>::iterator itMap;
@@ -28,7 +28,6 @@ crcData data;
 
 mMap m;
 itMap iter;
-
 
 
 unsigned int calculateCrc (unsigned char* buf, unsigned long len) {
@@ -96,7 +95,7 @@ tik++;
 void check(mMap m) {
 itMap i,j;
 for ( i = m.begin(); i != m.end(); ++i) {
-//if (i == m.begin()) ++i;
+
      j = i;
      --j;
 if( i -> second == j -> second) {
